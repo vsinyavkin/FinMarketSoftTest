@@ -1,0 +1,14 @@
+# .NET
+bin/
+obj/
+*.user
+
+# Visual Studio
+.vs/
+
+# Сборка фронта (генерируется из client/ командой npm run build)
+src/TickTraderProxy.Api/wwwroot/
+
+# Среды/секреты
+appsettings.*.Local.json
+*.env

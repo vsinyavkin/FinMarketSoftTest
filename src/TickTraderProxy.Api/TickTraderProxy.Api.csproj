@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Targets net8.0 (LTS, per ТЗ); build SDK 9 / run on .NET 9 runtime via roll-forward. -->
+    <RollForward>LatestMajor</RollForward>
+  </PropertyGroup>
+
+  <!-- SignalR, IHttpClientFactory и DataProtection входят в shared framework Microsoft.AspNetCore.App -->
+
+</Project>
