@@ -99,3 +99,41 @@ td {
 .badge.live {
   color: #12b76a;
 }
+
+.controls {
+  display: flex;
+  gap: 12px;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0;
+}
+
+select {
+  padding: 6px 8px;
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+}
+
+.forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.subcard {
+  flex: 1 1 280px;
+  border: 1px solid #eef0f3;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fafbfc;
+}
+
+.subcard h3 {
+  font-size: 1rem;
+  margin: 0 0 12px;
+}

@@ -3,7 +3,8 @@ import { HubConnectionBuilder, HubConnectionState, type HubConnection } from '@m
 import { api, type Tick } from './api'
 
 // Реалтайм-котировки: основной канал — SignalR push, фолбэк — клиентский polling.
-export function useQuotes(connected: boolean) {
+// pollIntervalMs — интервал фолбэк-опроса (из конфига сервера); по умолчанию 1500 мс.
+export function useQuotes(connected: boolean, pollIntervalMs = 1500) {
   const [quotes, setQuotes] = useState<Tick[]>([])
   const [live, setLive] = useState(false)
   const pollTimer = useRef<number | null>(null)
@@ -29,7 +30,7 @@ export function useQuotes(connected: boolean) {
         }
       }
       void tick()
-      pollTimer.current = window.setInterval(tick, 1500)
+      pollTimer.current = window.setInterval(tick, pollIntervalMs)
     }
 
     const stopPolling = () => {
@@ -73,7 +74,7 @@ export function useQuotes(connected: boolean) {
       stopPolling()
       if (connection && connection.state !== HubConnectionState.Disconnected) void connection.stop()
     }
-  }, [connected])
+  }, [connected, pollIntervalMs])
 
   return { quotes, live }
 }

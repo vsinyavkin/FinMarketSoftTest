@@ -40,7 +40,7 @@ public sealed class TickTraderClient(HttpClient http, IOptions<TickTraderOptions
     public Task<ProxyResult> GetTradesAsync(CancellationToken ct) =>
         SendAsync(HttpMethod.Get, "/api/v2/trade", null, ct);
 
-    // --- Ордера: каркас (шаг 7). Тонкий проброс; UI/валидация — отложены. ---
+    // --- Ордера: тонкий проброс к /api/v2/trade (создание/закрытие). ---
     public Task<ProxyResult> CreateOrderAsync(string json, CancellationToken ct) =>
         SendAsync(HttpMethod.Post, "/api/v2/trade", json, ct);
 

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using TickTraderProxy.Api.Hmac;
 using TickTraderProxy.Api.Models;
 using TickTraderProxy.Api.Services;
@@ -60,8 +61,14 @@ public static class SessionEndpoints
             return Results.Ok(new { connected = false });
         });
 
-        // Состояние сессии для фронта (есть ли активное подключение).
-        group.MapGet("/status", (HttpContext context, SessionCredentialsStore sessionStore) =>
-            Results.Ok(new { connected = sessionStore.Load(context.Session) is not null }));
+        // Состояние сессии для фронта: есть ли активное подключение + интервал обновления
+        // котировок из конфига (нужен клиентскому polling-фолбэку, чтобы не хардкодить).
+        group.MapGet("/status", (
+                HttpContext context, SessionCredentialsStore sessionStore, IOptions<TickTraderOptions> options) =>
+            Results.Ok(new
+            {
+                connected = sessionStore.Load(context.Session) is not null,
+                quoteRefreshIntervalMs = options.Value.QuoteRefreshIntervalMs
+            }));
     }
 }
