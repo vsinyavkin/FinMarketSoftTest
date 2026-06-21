@@ -157,6 +157,13 @@ function AccountPanel() {
   }, [])
 
   const a = (account ?? {}) as Record<string, unknown>
+  // Margin level = Equity / Margin × 100% (если апи не отдаёт готовое поле).
+  // При Margin = 0 (нет открытых позиций) уровень маржи не определён → «—».
+  const equity = num(field(a, 'Equity'))
+  const margin = num(field(a, 'Margin'))
+  const marginLevel =
+    field(a, 'MarginLevel') ??
+    (equity != null && margin != null && margin > 0 ? `${((equity / margin) * 100).toFixed(2)}%` : undefined)
   const rows: [string, unknown][] = [
     ['Счёт', field(a, 'Id', 'Account', 'AccountId')],
     ['Тип', field(a, 'AccountingType', 'Type')],
@@ -164,7 +171,7 @@ function AccountPanel() {
     ['Баланс', field(a, 'Balance')],
     ['Валюта', field(a, 'BalanceCurrency', 'Currency')],
     ['Equity', field(a, 'Equity')],
-    ['Margin level', field(a, 'MarginLevel')],
+    ['Margin level', marginLevel],
   ]
 
   return (
