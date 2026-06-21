@@ -67,7 +67,7 @@ dotnet test
 | Ключ | Назначение |
 |------|------------|
 | `BaseUrl` | адрес TickTrader Web API (`https://demonstrationwebapi.soft-fx.eu:8443`) |
-| `Symbols` | символы котировок по умолчанию |
+| `Symbols` | символы котировок по умолчанию (`BTCUSD, EURUSD, GBPUSD., AUDUSD., USDCHF., USDJPY.`) |
 | `QuoteRefreshIntervalMs` | интервал фонового опроса котировок |
 | `AllowInvalidServerCertificate` | послабление TLS — см. ниже |
 
@@ -95,6 +95,28 @@ Header: Authorization: HMAC {webApiId}:{webApiKey}:{unixTimestampMs}:{base64}
 - `GET  /api/session/status` отдаёт `quoteRefreshIntervalMs` — клиентский polling-фолбэк
   берёт интервал из конфига, а не хардкодит
 - SignalR hub: `/hubs/marketdata` (сообщение `quotes` — сырой JSON `/tick`)
+
+## TickTrader Web API (вызовы за прокси)
+Фронт сюда не ходит — это апстрим, который дёргает прокси после HMAC-подписи.
+- `GET /api/v2/tick/{filter}` — котировки
+- `GET /api/v2/symbol/{filter}` | `GET /api/v2/symbol` — метаданные символов (precision)
+- `GET /api/v2/level2/{filter}?depth=N` — стакан Level 2
+- `GET /api/v2/account` — счёт
+- `GET /api/v2/trade` — открытые ордера
+- `POST /api/v2/trade` body `{Type:"Market",Side,Symbol,Amount,Comment}` — маркет-ордер
+- `DELETE /api/v2/trade?Type=Close&Id={id}&Amount=N` — закрытие
+- `{filter}` = имя символа или список через пробел, url-encoded
+
+## Бизнес-правила UI
+- **Котировки**: колонки Symbol / Time / Best Bid / Best Ask / Spread.
+  `Spread = (BestAsk − BestBid) × 10^Precision`, где `Precision` берётся из метаданных
+  символа (`/symbols`) и различается между символами. Автообновление — SignalR push;
+  фолбэк — клиентский polling по `quoteRefreshIntervalMs` из `/api/session/status`.
+- **Level 2**: выбор символа + выбор глубины; Bid/Ask с объёмами, периодический refetch.
+- **Account**: номер, тип, плечо, баланс + валюта, equity, margin level, кнопка Refresh.
+- **Ордера**: таблица открытых (Id / Symbol / Side / Type / Price / Remaining), форма
+  создания маркет-ордера, форма закрытия; список рефрешится после операций.
+- **Disconnect**: чистит чувствительные данные и останавливает обновление UI.
 
 ## Послабление TLS (временное, только demo)
 Demo на `:8443` может отдавать самоподписанный сертификат. Для этого предусмотрен флаг
