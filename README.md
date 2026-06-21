@@ -78,9 +78,7 @@ base64          = Base64( HMACSHA256( key = webApiSecret, message = signatureStr
 Header: Authorization: HMAC {webApiId}:{webApiKey}:{unixTimestampMs}:{base64}
 ```
 - Кодировка байт — **US-ASCII** (message и key), как в эталонной реализации SoftFX
-  (секция Q&A на `…:8443/api/doc/index`). Примечание: исходное ТЗ упоминало UTF-8;
-  для ASCII-содержимого (timestamp/id/uri) байты совпадают, но источником истины взята
-  официальная дока. Реализация и пиннинг — `src/.../Hmac/HmacSigner.cs`,
+  (секция Q&A на `…:8443/api/doc/index`). Реализация и пиннинг — `src/.../Hmac/HmacSigner.cs`,
   тест `tests/.../HmacSignerTests.cs`.
 - Подписывается **ровно тот** абсолютный URI и тело, что уходят в запрос
   (без нормализации; `{filter}` url-encoded, пробел → `%20`).
